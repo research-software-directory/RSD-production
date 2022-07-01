@@ -1,11 +1,16 @@
 ### Setup docker
 We first need to install docker and docker-compose:
 ```bash
-apt-get update && sudo apt-get install docker docker-compose
+sudo apt-get update && sudo apt-get install docker docker-compose
 ```
-According to https://docs.docker.com/engine/install/linux-postinstall/ we need to add the user to the docker group:
+According to https://docs.docker.com/engine/install/linux-postinstall/ we need to add the user to the docker group.
+You might need to create the group first:
 ```bash
-sudo groupadd docker && sudo usermod --append --groups docker $USER && newgrp docker
+sudo groupadd docker
+```
+Then add yourself to the group
+```bash
+sudo usermod --append --groups docker $USER && newgrp docker
 ```
 We then need to enable docker on startup:
 ```bash
