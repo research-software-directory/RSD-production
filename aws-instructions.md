@@ -41,7 +41,7 @@ echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec nginx /usr/bin/certbot re
 ```
 
 ### Automatically create backups to S3
-Create a backup script (fill in the values first):
+Create a backup script (fill in the values first). This script was adapted from https://glacius.tmont.com/articles/uploading-to-s3-in-bash:
 ```bash
 echo '
 docker-compose exec database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db && docker cp database:rsd-backup.tar $(date +%s)-rsd-backup.tar
@@ -63,6 +63,8 @@ curl -X PUT -T "${file}" \
   https://${bucket}.s3.amazonaws.com/${file}
 ' > make-backup.sh
 ```
+See e.g. https://supsystic.com/documentation/id-secret-access-key-amazon-s3/ on how to obtain a key and secret.
+
 Make it execuable:
 ```bash
 chmod +x make-backup.sh
@@ -71,3 +73,14 @@ And add it to the crontab:
 ```bash
 (crontab -l ; echo "0 4 * * * /home/ubuntu/make-backup.sh") | crontab -
 ```
+
+### Restoring a backup
+First place the backup file in the container:
+```bash
+docker cp rsd-backup.tar database:rsd-backup.tar
+```
+And to restore the backup, run 
+```bash
+docker-compose exec database pg_restore --username=rsd --dbname=rsd-db --clean rsd-backup.tar
+```
+*Warning:* note that the `--clean` flag will first clear the database.
