@@ -1,0 +1,73 @@
+### Setup docker
+We first need to install docker and docker-compose:
+```bash
+apt-get update && sudo apt-get install docker docker-compose
+```
+According to https://docs.docker.com/engine/install/linux-postinstall/ we need to add the user to the docker group:
+```bash
+sudo groupadd docker && sudo usermod --append --groups docker $USER && newgrp docker
+```
+We then need to enable docker on startup:
+```bash
+sudo systemctl enable docker.service && sudo systemctl enable containerd.service
+```
+
+### Install the RSD
+We first need to download the required files from the release we want to use:
+```bash
+curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v0.3.0/deployment.zip && unzip releases.zip
+```
+See https://github.com/research-software-directory/RSD-as-a-service/releases for other releases.
+
+Now create the env file and fill in or adapt the values:
+```bash
+cp .env.example .env && nano .env
+```
+Make sure to make a note of the passwords you set and store them somewhere safe. 
+Now you are ready to launch the RSD:
+```bash
+docker-compose up --detach
+```
+To obtain https certificates, make sure the domain name points to your vm and run
+```bash
+docker-compose exec nginx bash -c 'certbot --nginx -d domain.example.com --agree-tos -m email@example.com'
+```
+Visit your domain, the RSD should now be running!
+
+### Automatically renew https certificates
+Run the following to check the certificates every day at 5 AM:
+```bash
+echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec nginx /usr/bin/certbot renew --quiet'" | crontab -
+```
+
+### Automatically create backups to S3
+Create a backup script (fill in the values first):
+```bash
+echo '
+docker-compose exec database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db && docker cp database:rsd-backup.tar $(date +%s)-rsd-backup.tar
+
+file=/path/to/file/to/upload.tar.gz
+bucket=your-bucket
+resource="/${bucket}/${file}"
+contentType="application/x-compressed-tar"
+dateValue=`date -R`
+stringToSign="PUT\n\n${contentType}\n${dateValue}\n${resource}"
+s3Key=xxxxxxxxxxxxxxxxxxxx
+s3Secret=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3Secret} -binary | base64`
+curl -X PUT -T "${file}" \
+  -H "Host: ${bucket}.s3.amazonaws.com" \
+  -H "Date: ${dateValue}" \
+  -H "Content-Type: ${contentType}" \
+  -H "Authorization: AWS ${s3Key}:${signature}" \
+  https://${bucket}.s3.amazonaws.com/${file}
+' > make-backup.sh
+```
+Make it execuable:
+```bash
+chmod +x make-backup.sh
+```
+And add it to the crontab:
+```bash
+(crontab -l ; echo "0 4 * * * /home/ubuntu/make-backup.sh") | crontab -
+```
