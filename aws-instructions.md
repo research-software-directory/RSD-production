@@ -55,11 +55,17 @@ echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec nginx /usr/bin/certbot re
 Create a backup script (fill in the values first). This script was adapted from https://glacius.tmont.com/articles/uploading-to-s3-in-bash:
 ```bash
 echo '
-docker-compose exec database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db && docker cp database:rsd-backup.tar $(date --utc -Iseconds)-rsd-backup.tar
+#!/bin/bash
+rm *-rsd-backup.tar
 
-file=/path/to/file/to/upload.tar.gz
+docker-compose exec database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db && docker cp database:rsd-backup.tar rsd-backup.tar
+
+mv rsd-backup.tar $(date --utc -Iseconds)-rsd-backup.tar
+
+file=$(ls *-rsd-backup.tar)
+bucket_folder=your/s3/subfolders
 bucket=your-bucket
-resource="/${bucket}/${file}"
+resource="/${bucket}/${bucket_folder}/${file}"
 contentType="application/x-compressed-tar"
 dateValue=`date -R`
 stringToSign="PUT\n\n${contentType}\n${dateValue}\n${resource}"
@@ -71,7 +77,7 @@ curl -X PUT -T "${file}" \
   -H "Date: ${dateValue}" \
   -H "Content-Type: ${contentType}" \
   -H "Authorization: AWS ${s3Key}:${signature}" \
-  https://${bucket}.s3.amazonaws.com/${file}
+  https://${bucket}.s3.amazonaws.com/${bucket_folder}/${file}
 ' > make-backup.sh
 ```
 See e.g. https://supsystic.com/documentation/id-secret-access-key-amazon-s3/ on how to obtain a key and secret.
