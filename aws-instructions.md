@@ -1,7 +1,7 @@
 ### Setup docker
-We first need to install docker and docker-compose:
+We first need to install docker, docker-compose and unzip:
 ```bash
-sudo apt-get update && sudo apt-get install docker docker-compose
+sudo apt-get update && sudo apt-get install docker docker-compose unzip
 ```
 According to https://docs.docker.com/engine/install/linux-postinstall/ we need to add the user to the docker group.
 You might need to create the group first:
@@ -20,7 +20,7 @@ sudo systemctl enable docker.service && sudo systemctl enable containerd.service
 ### Install the RSD
 We first need to download the required files from the release we want to use:
 ```bash
-curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v1.0.0/deployment.zip && unzip releases.zip
+curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v1.0.0/deployment.zip && unzip release.zip
 ```
 See https://github.com/research-software-directory/RSD-as-a-service/releases for other releases.
 
