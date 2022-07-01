@@ -49,7 +49,7 @@ echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec nginx /usr/bin/certbot re
 Create a backup script (fill in the values first). This script was adapted from https://glacius.tmont.com/articles/uploading-to-s3-in-bash:
 ```bash
 echo '
-docker-compose exec database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db && docker cp database:rsd-backup.tar $(date +%s)-rsd-backup.tar
+docker-compose exec database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db && docker cp database:rsd-backup.tar $(date --utc -Iseconds)-rsd-backup.tar
 
 file=/path/to/file/to/upload.tar.gz
 bucket=your-bucket
