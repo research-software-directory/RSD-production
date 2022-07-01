@@ -29,6 +29,12 @@ Now create the env file and fill in or adapt the values:
 cp .env.example .env && nano .env
 ```
 Make sure to make a note of the passwords you set and store them somewhere safe. 
+
+Enter the domain(s) you want NGINX to listen to, look for the line that says `server_name  localhost`:
+```bash
+nano nginx.conf
+```
+
 Now you are ready to launch the RSD:
 ```bash
 docker-compose up --detach
