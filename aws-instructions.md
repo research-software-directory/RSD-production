@@ -48,7 +48,7 @@ Visit your domain, the RSD should now be running!
 ### Automatically renew https certificates
 Run the following to check the certificates every day at 5 AM:
 ```bash
-echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec nginx /usr/bin/certbot renew --quiet'" | crontab -
+echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec --tty nginx /usr/bin/certbot renew --quiet'" | crontab -
 ```
 
 ### Automatically create backups to S3
