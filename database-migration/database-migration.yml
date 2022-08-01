@@ -1,0 +1,42 @@
+version: "3.0"
+
+services:
+  migration-database:
+    container_name: migration-database
+    build: ./database
+    image: rsd/migration-database:1.0.1
+    ports:
+      # only expose the port within the docker network
+      - "5432"
+    environment:
+      # it uses values from .env file
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_AUTHENTICATOR_PASSWORD
+    volumes:
+      # named volume so it can easily be removed
+      - remove-this-db-volume:/var/lib/postgresql/data/
+    networks:
+      - rsd-as-a-service_net
+
+  migra:
+    container_name: migra
+    build: ./migra
+    image: rsd/migra:1.0.1
+    environment:
+      # it uses values from .env file
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    depends_on:
+      - migration-database
+    networks:
+      - rsd-as-a-service_net
+
+networks:
+  rsd-as-a-service_net:
+    external: true
+
+volumes:
+  remove-this-db-volume:
