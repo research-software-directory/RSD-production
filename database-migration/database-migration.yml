@@ -18,7 +18,7 @@ services:
       # named volume so it can easily be removed
       - remove-this-db-volume:/var/lib/postgresql/data/
     networks:
-      - rsd-as-a-service_net
+      - ubuntu_net
 
   migra:
     container_name: migra
@@ -32,10 +32,10 @@ services:
     depends_on:
       - migration-database
     networks:
-      - rsd-as-a-service_net
+      - ubuntu_net
 
 networks:
-  rsd-as-a-service_net:
+  ubuntu_net:
     external: true
 
 volumes:

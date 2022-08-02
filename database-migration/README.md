@@ -9,9 +9,19 @@ migra is open source and the [repo is here](https://github.com/djrobstep/migra).
     The [documentation website is here](https://databaseci.com/docs/migra/quickstart).
 
 ## Steps to generate and execute migration script
-Copy the `database-migration.yml` file and the `migra` directory to the directory where you host the RSD (i.e. the directory where the `.env` and `docker-compose.yml` files are). 
+Copy the `database-migration.yml` file and the `migra` and `database` directories to the directory where you host the RSD (i.e. the directory where the `.env` and `docker-compose.yml` files are):
+```bash
+curl --location --output migration.zip https://github.com/research-software-directory/RSD-production/archive/refs/heads/main.zip 
+unzip -j migration.zip RSD-production-main/database-migration/database-migration.yml
+unzip -j migration.zip RSD-production-main/database-migration/database/* -d database
+unzip -j migration.zip RSD-production-main/database-migration/migra/* -d migra
+```
 
-First build the images:
+Copy the initialisation files from the running database container to the database directory:
+```bash
+docker cp database:/docker-entrypoint-initdb.d/. database/.
+```
+Now build the images:
 ```bash
 docker-compose --file database-migration.yml build --parallel
 ```
@@ -31,7 +41,7 @@ nano migration.sql
 ```
 Copy the file to the database container:
 ```bash
-docker cp migration.sql rsd-as-a-service_database_1:migration.sql
+docker cp migration.sql database:migration.sql
 ```
 Now we can execute the statements in this file. The `--single-transaction` flag is **very** important, you might end up in a corrupted state otherwise:
 ```bash
