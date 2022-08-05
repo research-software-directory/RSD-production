@@ -30,7 +30,10 @@ cp .env.example .env && nano .env
 ```
 Make sure to make a note of the passwords you set and store them somewhere safe. 
 
-Enter the domain(s) you want NGINX to listen to, look for the line that says `server_name  localhost`:
+Enter the domain(s) you want NGINX to listen to, look for the line that says `server_name
+
+
+localhost`:
 ```bash
 nano nginx.conf
 ```
@@ -48,7 +51,7 @@ Visit your domain, the RSD should now be running!
 ### Automatically renew https certificates
 Run the following to check the certificates every day at 5 AM:
 ```bash
-echo "0 5 * * * /usr/bin/bash -c  'docker-compose exec -T nginx /usr/bin/certbot renew'" | crontab -
+echo "0 5 * * * /usr/bin/bash -c 'docker-compose exec -T nginx /usr/bin/certbot renew'" | crontab -
 ```
 
 ### Automatically create backups to S3
@@ -91,6 +94,13 @@ And add it to the crontab:
 ```bash
 (crontab -l ; echo "0 4 * * * /home/ubuntu/make-backup.sh") | crontab -
 ```
+
+### Update the RSD
+When a [new version of the RSD is released](https://github.com/research-software-directory/RSD-as-a-service/releases), you might want to update your instance. Download the new zip file and unzip it (see the instructions above) and make sure to only replace the `nginx.conf` file if you need the update and made a backup of the old one . Run 
+```bash
+docker-compose up --detach
+```
+to update the containers. You then might have to update the database schema. See the [database-migration](https://github.com/research-software-directory/RSD-production/tree/main/database-migration) directory of this repo for instructions and check the [migration-scripts](https://github.com/research-software-directory/RSD-production/tree/main/database-migration/migration-scripts) directory in there for scripts that allow you to update the database between two consecutive versions.
 
 ### Restoring a backup
 First place the backup file in the container:
