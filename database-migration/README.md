@@ -47,11 +47,15 @@ Now we can execute the statements in this file. The `--single-transaction` flag 
 ```bash
 docker-compose exec database psql --dbname=rsd-db --username=rsd --single-transaction --file=migration.sql
 ```
+We need to [reload the schema cache](database-migration.yml) of PostgREST:
+```bash
+docker-compose kill -s SIGUSR1 backend
+```
 You can now safely delete the migration containers and volumes. You need to do this in order for migra to detect new changes the next time you repeat this procedure:
 ```bash
 docker-compose --file database-migration.yml down --volumes
 ```
-Finally, we need to [reload the schema cache](database-migration.yml) of PostgREST:
+Finally, cleanup the database files for the next time:
 ```bash
-docker-compose kill -s SIGUSR1 backend
+rm database/*.sql database/*.sh
 ```
