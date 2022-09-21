@@ -538,3 +538,8 @@ using (true);
 CREATE TRIGGER sanitise_insert_oaipmh BEFORE INSERT ON public.oaipmh FOR EACH ROW EXECUTE FUNCTION sanitise_insert_oaipmh();
 
 CREATE TRIGGER sanitise_update_oaipmh BEFORE UPDATE ON public.oaipmh FOR EACH ROW EXECUTE FUNCTION sanitise_update_oaipmh();
+
+
+---------- CREATED MANUALLY ----------
+
+INSERT INTO oaipmh (id) VALUES (TRUE);
