@@ -31,7 +31,7 @@ docker-compose --file database-migration.yml up
 ```
 Wait until migra has run (it waits for 10 seconds before operating). When it exits with exit code `0`, no differences where found, whereas when it exits with exit code `2`, differences *were* found. In both cases, stop the containers with `Ctrl+C`.
 
-In the case of differences, cope the file from the container to the local file system:
+In the case of differences, copy the file from the container to the local file system:
 ```bash
 docker cp migra:migration.sql migration.sql
 ```
