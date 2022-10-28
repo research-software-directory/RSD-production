@@ -96,7 +96,12 @@ And add it to the crontab:
 ```
 
 ### Update the RSD
-When a [new version of the RSD is released](https://github.com/research-software-directory/RSD-as-a-service/releases), you might want to update your instance. Download the new zip file and unzip it (see the instructions above) and make sure to only replace the `nginx.conf` file if you need the update and made a backup of the old one . Run 
+When a [new version of the RSD is released](https://github.com/research-software-directory/RSD-as-a-service/releases), you might want to update your instance. Download the new zip file and unzip it (see the instructions above) and make sure to only replace the `nginx.conf` file if you need the update and made a backup of the old one . Make the backup first:
+```bash
+./make-backup.sh
+```
+
+Then run
 ```bash
 docker-compose up --detach
 ```
