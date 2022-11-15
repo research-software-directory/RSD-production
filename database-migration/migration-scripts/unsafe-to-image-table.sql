@@ -155,8 +155,7 @@ CREATE OR REPLACE FUNCTION public.unique_persons()
  LANGUAGE plpgsql
  STABLE
 AS $function$
-BEGIN
-	RETURN QUERY
+BEGIN RETURN QUERY
 		SELECT
 			unique_contributors.display_name,
 			unique_contributors.affiliation,
@@ -344,7 +343,7 @@ $function$
 ;
 
 CREATE OR REPLACE FUNCTION public.project_search()
- RETURNS TABLE(id uuid, slug character varying, title character varying, subtitle character varying, current_state character varying, date_start date, updated_at timestamp with time zone, is_published boolean, image_contain boolean, image_id character varying, keywords citext[])
+ RETURNS TABLE(id uuid, slug character varying, title character varying, subtitle character varying, current_state character varying, date_start date, updated_at timestamp with time zone, is_published boolean, image_contain boolean, image_id character varying, keywords citext[], keywords_text text, research_domain character varying[], research_domain_text text)
  LANGUAGE plpgsql
  STABLE
 AS $function$
@@ -365,11 +364,16 @@ BEGIN
 		project.is_published,
 		project.image_contain,
 		project.image_id,
-		keyword_filter_for_project.keywords
+		keyword_filter_for_project.keywords,
+		keyword_filter_for_project.keywords_text,
+		research_domain_filter_for_project.research_domain,
+		research_domain_filter_for_project.research_domain_text
 	FROM
 		project
 	LEFT JOIN
 		keyword_filter_for_project() ON project.id=keyword_filter_for_project.project
+	LEFT JOIN
+		research_domain_filter_for_project() ON project.id=research_domain_filter_for_project.project
 	;
 END
 $function$
@@ -576,7 +580,7 @@ as permissive
 for all
 to rsd_admin
 using (true)
-with check (true);
+with check true;
 
 
 create policy "anyone_can_read"
@@ -593,7 +597,7 @@ as permissive
 for all
 to rsd_user
 using (true)
-with check (true);
+with check true;
 
 
 CREATE TRIGGER sanitise_insert_image BEFORE INSERT ON public.image FOR EACH ROW EXECUTE FUNCTION sanitise_insert_image();
