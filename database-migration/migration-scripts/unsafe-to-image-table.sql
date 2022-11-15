@@ -580,7 +580,7 @@ as permissive
 for all
 to rsd_admin
 using (true)
-with check true;
+with check (true);
 
 
 create policy "anyone_can_read"
@@ -597,7 +597,7 @@ as permissive
 for all
 to rsd_user
 using (true)
-with check true;
+with check (true);
 
 
 CREATE TRIGGER sanitise_insert_image BEFORE INSERT ON public.image FOR EACH ROW EXECUTE FUNCTION sanitise_insert_image();
