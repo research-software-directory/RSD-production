@@ -1,5 +1,3 @@
--- UNSAFE, work in progress, not production ready yet!
-
 ---------- CREATED BY MIGRA ----------
 
 create extension if not exists "pgcrypto" with schema "public" version '1.3';
@@ -617,4 +615,3 @@ BEGIN
 END
 $function$
 ;
-
