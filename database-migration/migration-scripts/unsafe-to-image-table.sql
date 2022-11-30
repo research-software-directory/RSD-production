@@ -4,6 +4,111 @@
 
 create extension if not exists "pgcrypto" with schema "public" version '1.3';
 
+
+-- moved manually
+create table "public"."image" (
+    "id" character varying(40) not null,
+    "data" character varying(2750000) not null,
+    "mime_type" character varying(100) not null,
+    "created_at" timestamp with time zone not null
+);
+
+
+alter table "public"."image" enable row level security;
+
+CREATE UNIQUE INDEX image_pkey ON public.image USING btree (id);
+
+alter table "public"."image" add constraint "image_pkey" PRIMARY KEY using index "image_pkey";
+
+create policy "admin_all_rights"
+on "public"."image"
+as permissive
+for all
+to rsd_admin
+using (true)
+with check (true);
+
+
+create policy "anyone_can_read"
+on "public"."image"
+as permissive
+for select
+to web_anon, rsd_user
+using (true);
+
+
+create policy "rsd_user_all_rights"
+on "public"."image"
+as permissive
+for all
+to rsd_user
+using (true)
+with check (true);
+
+set check_function_bodies = off;
+
+CREATE OR REPLACE FUNCTION public.sanitise_insert_image()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+-- create SHA-1 id based on provided data content
+	NEW.id = ENCODE(DIGEST(NEW.data, 'sha1'), 'hex');
+	NEW.created_at = LOCALTIMESTAMP;
+	return NEW;
+END
+$function$
+;
+
+CREATE OR REPLACE FUNCTION public.sanitise_update_image()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+-- create SHA-1 id based on provided data content
+	NEW.id = ENCODE(DIGEST(NEW.data, 'sha1'), 'hex');
+	return NEW;
+END
+$function$
+;
+
+CREATE TRIGGER sanitise_insert_image BEFORE INSERT ON public.image FOR EACH ROW EXECUTE FUNCTION sanitise_insert_image();
+
+CREATE TRIGGER sanitise_update_image BEFORE UPDATE ON public.image FOR EACH ROW EXECUTE FUNCTION sanitise_update_image();
+
+alter table "public"."contributor" add column "avatar_id" character varying(40);
+
+alter table "public"."organisation" add column "logo_id" character varying(40);
+
+alter table "public"."project" add column "image_id" character varying(40);
+
+alter table "public"."team_member" add column "avatar_id" character varying(40);
+
+alter table "public"."contributor" add constraint "contributor_avatar_id_fkey" FOREIGN KEY (avatar_id) REFERENCES image(id);
+
+alter table "public"."organisation" add constraint "organisation_logo_id_fkey" FOREIGN KEY (logo_id) REFERENCES image(id);
+
+alter table "public"."project" add constraint "project_image_id_fkey" FOREIGN KEY (image_id) REFERENCES image(id);
+
+alter table "public"."team_member" add constraint "team_member_avatar_id_fkey" FOREIGN KEY (avatar_id) REFERENCES image(id);
+-- end moved manually
+
+
+-- manually added
+--- first copy all existing images to image table
+INSERT INTO IMAGE (data, mime_type) SELECT avatar_data, COALESCE(avatar_mime_type, '') FROM contributor WHERE avatar_data IS NOT NULL AND LENGTH(TRIM(avatar_data)) > 0 ON CONFLICT DO NOTHING;
+INSERT INTO IMAGE (data, mime_type) SELECT data, mime_type FROM image_for_project ON CONFLICT DO NOTHING;
+INSERT INTO IMAGE (data, mime_type) SELECT avatar_data, COALESCE(avatar_mime_type, '') FROM team_member WHERE avatar_data IS NOT NULL AND LENGTH(TRIM(avatar_data)) > 0 ON CONFLICT DO NOTHING;
+INSERT INTO IMAGE (data, mime_type) SELECT data, mime_type FROM logo_for_organisation ON CONFLICT DO NOTHING;
+
+--- now set the references to those images by calculating their checksums again
+UPDATE contributor SET avatar_id = (ENCODE(DIGEST(avatar_data,'sha1'),'hex')) WHERE avatar_data IS NOT NULL AND LENGTH(TRIM(avatar_data)) > 0;
+UPDATE project SET image_id = (SELECT ENCODE(DIGEST(image_for_project.data,'sha1'),'hex') FROM image_for_project WHERE image_for_project.project = id);
+UPDATE team_member SET avatar_id = (ENCODE(DIGEST(avatar_data,'sha1'),'hex')) WHERE avatar_data IS NOT NULL AND LENGTH(TRIM(avatar_data)) > 0;
+UPDATE organisation SET logo_id = (SELECT ENCODE(DIGEST(logo_for_organisation.data,'sha1'),'hex') FROM logo_for_organisation WHERE logo_for_organisation.organisation = id);
+-- end manually added
+
+
 drop policy "admin_all_rights" on "public"."image_for_project";
 
 drop policy "anyone_can_read" on "public"."image_for_project";
@@ -64,45 +169,13 @@ drop table "public"."image_for_project";
 
 drop table "public"."logo_for_organisation";
 
-create table "public"."image" (
-    "id" character varying(40) not null,
-    "data" character varying(2750000) not null,
-    "mime_type" character varying(100) not null,
-    "created_at" timestamp with time zone not null
-);
-
-
-alter table "public"."image" enable row level security;
-
 alter table "public"."contributor" drop column "avatar_data";
 
 alter table "public"."contributor" drop column "avatar_mime_type";
 
-alter table "public"."contributor" add column "avatar_id" character varying(40);
-
-alter table "public"."organisation" add column "logo_id" character varying(40);
-
-alter table "public"."project" add column "image_id" character varying(40);
-
 alter table "public"."team_member" drop column "avatar_data";
 
 alter table "public"."team_member" drop column "avatar_mime_type";
-
-alter table "public"."team_member" add column "avatar_id" character varying(40);
-
-CREATE UNIQUE INDEX image_pkey ON public.image USING btree (id);
-
-alter table "public"."image" add constraint "image_pkey" PRIMARY KEY using index "image_pkey";
-
-alter table "public"."contributor" add constraint "contributor_avatar_id_fkey" FOREIGN KEY (avatar_id) REFERENCES image(id);
-
-alter table "public"."organisation" add constraint "organisation_logo_id_fkey" FOREIGN KEY (logo_id) REFERENCES image(id);
-
-alter table "public"."project" add constraint "project_image_id_fkey" FOREIGN KEY (image_id) REFERENCES image(id);
-
-alter table "public"."team_member" add constraint "team_member_avatar_id_fkey" FOREIGN KEY (avatar_id) REFERENCES image(id);
-
-set check_function_bodies = off;
 
 CREATE OR REPLACE FUNCTION public.get_image(uid character varying)
  RETURNS bytea
@@ -137,48 +210,35 @@ END
 $function$
 ;
 
-CREATE OR REPLACE FUNCTION public.sanitise_insert_image()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-BEGIN
--- create SHA-1 id based on provided data content
-	NEW.id = encode(digest(NEW.data,'sha1'),'hex');
-	NEW.created_at = LOCALTIMESTAMP;
-	return NEW;
-END
-$function$
-;
-
 CREATE OR REPLACE FUNCTION public.unique_persons()
  RETURNS TABLE(display_name text, affiliation character varying, orcid character varying, given_names character varying, family_names character varying, email_address character varying, avatar_id character varying)
  LANGUAGE plpgsql
  STABLE
 AS $function$
 BEGIN RETURN QUERY
-		SELECT
-			unique_contributors.display_name,
-			unique_contributors.affiliation,
-			unique_contributors.orcid,
-			unique_contributors.given_names,
-			unique_contributors.family_names,
-			unique_contributors.email_address,
-			unique_contributors.avatar_id
-		FROM
-			unique_contributors()
-		UNION
-		SELECT
-			unique_team_members.display_name,
-			unique_team_members.affiliation,
-			unique_team_members.orcid,
-			unique_team_members.given_names,
-			unique_team_members.family_names,
-			unique_team_members.email_address,
-			unique_team_members.avatar_id
-		FROM
-			unique_team_members()
-		ORDER BY
-			display_name ASC;
+	SELECT
+		unique_contributors.display_name,
+		unique_contributors.affiliation,
+		unique_contributors.orcid,
+		unique_contributors.given_names,
+		unique_contributors.family_names,
+		unique_contributors.email_address,
+		unique_contributors.avatar_id
+	FROM
+		unique_contributors()
+	UNION
+	SELECT
+		unique_team_members.display_name,
+		unique_team_members.affiliation,
+		unique_team_members.orcid,
+		unique_team_members.given_names,
+		unique_team_members.family_names,
+		unique_team_members.email_address,
+		unique_team_members.avatar_id
+	FROM
+		unique_team_members()
+	ORDER BY
+		display_name ASC;
 END
 $function$
 ;
@@ -206,8 +266,6 @@ BEGIN
 		organisation_route.rsd_path
 	FROM
 		organisation
-	-- LEFT JOIN
-	-- 	logo_for_organisation ON logo_for_organisation.organisation = organisation.id
 	LEFT JOIN
 		software_count_by_organisation() ON software_count_by_organisation.organisation = organisation.id
 	LEFT JOIN
@@ -254,8 +312,6 @@ BEGIN
 		organisation ON project_for_organisation.organisation = organisation.id
 	LEFT JOIN
 		organisation_route(organisation.id) ON organisation_route.organisation = organisation.id
-	-- LEFT JOIN
-	-- 	logo_for_organisation ON logo_for_organisation.organisation = organisation.id
 	WHERE
 		project.id = project_id
 	;
@@ -291,8 +347,6 @@ BEGIN
 		organisation ON software_for_organisation.organisation = organisation.id
 	LEFT JOIN
 		organisation_route(organisation.id) ON organisation_route.organisation = organisation.id
-	-- LEFT JOIN
-	-- 	logo_for_organisation ON logo_for_organisation.organisation = organisation.id
 	WHERE
 		software.id = software_id
 	;
@@ -335,8 +389,6 @@ BEGIN
 		project_count_by_organisation(public) ON project_count_by_organisation.organisation = organisation.id
 	LEFT JOIN
 		children_count_by_organisation() ON children_count_by_organisation.parent = organisation.id
-	-- LEFT JOIN
-	-- 	logo_for_organisation ON logo_for_organisation.organisation = organisation.id
 	;
 END
 $function$
@@ -403,8 +455,6 @@ BEGIN
 		project.image_id
 	FROM
 		project
-	-- LEFT JOIN
-	-- 	image_for_project ON project.id = image_for_project.project
 	INNER JOIN
 		maintainer_for_project ON project.id = maintainer_for_project.project
 	WHERE
@@ -441,8 +491,6 @@ BEGIN
 		keyword_filter_for_project.keywords
 	FROM
 		project
-	-- LEFT JOIN
-	-- 	image_for_project ON project.id = image_for_project.project
 	LEFT JOIN
 		project_for_organisation ON project.id = project_for_organisation.project
 	LEFT JOIN
@@ -480,8 +528,6 @@ BEGIN
 		project.image_id
 	FROM
 		project
-	-- LEFT JOIN
-	-- 	image_for_project ON image_for_project.project = project.id
 	INNER JOIN
 		project_for_project ON project.id = project_for_project.relation
 	WHERE
@@ -517,8 +563,6 @@ BEGIN
 		project.image_id
 	FROM
 		project
-	-- LEFT JOIN
-	-- 	image_for_project ON image_for_project.project = project.id
 	INNER JOIN
 		software_for_project ON project.id = software_for_project.project
 	WHERE
@@ -574,32 +618,3 @@ END
 $function$
 ;
 
-create policy "admin_all_rights"
-on "public"."image"
-as permissive
-for all
-to rsd_admin
-using (true)
-with check (true);
-
-
-create policy "anyone_can_read"
-on "public"."image"
-as permissive
-for select
-to web_anon, rsd_user
-using (true);
-
-
-create policy "rsd_user_all_rights"
-on "public"."image"
-as permissive
-for all
-to rsd_user
-using (true)
-with check (true);
-
-
-CREATE TRIGGER sanitise_insert_image BEFORE INSERT ON public.image FOR EACH ROW EXECUTE FUNCTION sanitise_insert_image();
-
-CREATE TRIGGER sanitise_update_image BEFORE UPDATE ON public.image FOR EACH ROW EXECUTE FUNCTION sanitise_insert_image();
