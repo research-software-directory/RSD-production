@@ -54,7 +54,7 @@ Run the following to check the certificates every day at 5 AM:
 echo "0 5 * * * /usr/bin/bash -c 'docker-compose exec -T nginx /usr/bin/certbot renew'" | crontab -
 ```
 
-### Automatically create backups to S3
+### Automatically create backups to S3 and SURFdrive
 Create a backup script (fill in the values first). This script was adapted from https://glacius.tmont.com/articles/uploading-to-s3-in-bash:
 ```bash
 echo '
@@ -84,7 +84,7 @@ curl -X PUT -T "${file}" \
   https://${bucket}.s3.amazonaws.com/${bucket_folder}/${file}
 
 curl --user username:password --upload-file ${file} \
-    "https://surfdrive.surf.nl/files/remote.php/nonshib-webdav/rsd-backups/"
+  "https://surfdrive.surf.nl/files/remote.php/nonshib-webdav/rsd-backups/"
 ```
 See e.g. https://supsystic.com/documentation/id-secret-access-key-amazon-s3/ on how to obtain a key and secret.
 
