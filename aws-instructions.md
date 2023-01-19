@@ -82,7 +82,9 @@ curl -X PUT -T "${file}" \
   -H "Content-Type: ${contentType}" \
   -H "Authorization: AWS ${s3Key}:${signature}" \
   https://${bucket}.s3.amazonaws.com/${bucket_folder}/${file}
-' > make-backup.sh
+
+curl --user username:password --upload-file ${file} \
+    "https://surfdrive.surf.nl/files/remote.php/nonshib-webdav/rsd-backups/"
 ```
 See e.g. https://supsystic.com/documentation/id-secret-access-key-amazon-s3/ on how to obtain a key and secret.
 
