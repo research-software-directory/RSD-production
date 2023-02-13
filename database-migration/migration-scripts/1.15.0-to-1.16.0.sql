@@ -64,11 +64,11 @@ alter table "public"."release_version" enable row level security;
 
 alter table "public"."account" add column "agree_terms" boolean not null default false;
 
-alter table "public"."account" add column "agree_terms_updated_at" timestamp with time zone not null;
+alter table "public"."account" add column "agree_terms_updated_at" timestamp with time zone;
 
 alter table "public"."account" add column "notice_privacy_statement" boolean not null default false;
 
-alter table "public"."account" add column "notice_privacy_statement_updated_at" timestamp with time zone not null;
+alter table "public"."account" add column "notice_privacy_statement_updated_at" timestamp with time zone;
 
 alter table "public"."mention" add column "publication_date" date;
 
