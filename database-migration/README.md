@@ -47,7 +47,7 @@ Now we can execute the statements in this file. The `--single-transaction` flag 
 ```bash
 docker-compose exec database psql --dbname=rsd-db --username=rsd --single-transaction --file=migration.sql
 ```
-We need to [reload the schema cache](database-migration.yml) of PostgREST:
+We need to [reload the schema cache](https://postgrest.org/en/v10.0/schema_cache.html#schema-reloading) of PostgREST:
 ```bash
 docker-compose kill -s SIGUSR1 backend
 ```
