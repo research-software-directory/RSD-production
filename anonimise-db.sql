@@ -4,6 +4,8 @@ BEGIN;
 
 UPDATE organisation SET primary_maintainer = NULL;
 
+DELETE FROM backend_log;
+
 DELETE FROM orcid_whitelist;
 
 DELETE FROM oaipmh;
