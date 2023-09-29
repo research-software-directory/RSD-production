@@ -1,3 +1,5 @@
+---------- CREATED BY MIGRA ----------
+
 drop function if exists "public"."homepage_counts"(OUT software_cnt bigint, OUT project_cnt bigint, OUT organisation_cnt bigint, OUT contributor_cnt bigint, OUT software_mention_cnt bigint);
 
 set check_function_bodies = off;
