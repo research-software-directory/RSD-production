@@ -20,7 +20,7 @@ sudo systemctl enable docker.service && sudo systemctl enable containerd.service
 ### Install the RSD
 We first need to download the required files from the release we want to use:
 ```bash
-curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v2.9.1/deployment.zip && unzip release.zip
+curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v2.10.0/deployment.zip && unzip release.zip
 ```
 See https://github.com/research-software-directory/RSD-as-a-service/releases for other releases.
 
@@ -103,11 +103,15 @@ When a [new version of the RSD is released](https://github.com/research-software
 ./make-backup.sh
 ```
 
+As admin, activate a global announcement that you are updating the RSD.
+
 Then run
 ```bash
 docker-compose up --detach
 ```
 to update the containers. You then might have to update the database schema. See the [database-migration](https://github.com/research-software-directory/RSD-production/tree/main/database-migration) directory of this repo for instructions and check the [migration-scripts](https://github.com/research-software-directory/RSD-production/tree/main/database-migration/migration-scripts) directory in there for scripts that allow you to update the database between two consecutive versions.
+
+If you set a global announcement, disactivate it.
 
 ### Restoring a backup
 First place the backup file in the container:
