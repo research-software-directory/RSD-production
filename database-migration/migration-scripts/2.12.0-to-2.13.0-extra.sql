@@ -1,1 +1,32 @@
+-- generated manually to update licenses
 
+UPDATE license_for_software SET "name" = 'Academic Free License v3.0', "reference" = 'https://spdx.org/licenses/AFL-3.0.html' WHERE "license" = 'AFL-3.0';
+UPDATE license_for_software SET "name" = 'GNU Affero General Public License v3.0 only', "reference" = 'https://spdx.org/licenses/AGPL-3.0-only.html' WHERE "license" = 'AGPL-3.0-only';
+UPDATE license_for_software SET "name" = 'GNU Affero General Public License v3.0 or later', "reference" = 'https://spdx.org/licenses/AGPL-3.0-or-later.html' WHERE "license" = 'AGPL-3.0-or-later';
+UPDATE license_for_software SET "name" = 'Apache License 2.0', "reference" = 'https://spdx.org/licenses/Apache-2.0.html' WHERE "license" = 'Apache-2.0';
+UPDATE license_for_software SET "name" = 'BSD 1-Clause License', "reference" = 'https://spdx.org/licenses/BSD-1-Clause.html' WHERE "license" = 'BSD-1-Clause';
+UPDATE license_for_software SET "name" = '"BSD 2-Clause ""Simplified"" License"', "reference" = 'https://spdx.org/licenses/BSD-2-Clause.html' WHERE "license" = 'BSD-2-Clause';
+UPDATE license_for_software SET "name" = '"BSD 3-Clause ""New"" or ""Revised"" License"', "reference" = 'https://spdx.org/licenses/BSD-3-Clause.html' WHERE "license" = 'BSD-3-Clause';
+UPDATE license_for_software SET "name" = 'BSD with attribution', "reference" = 'https://spdx.org/licenses/BSD-3-Clause-Attribution.html' WHERE "license" = 'BSD-3-Clause-Attribution';
+UPDATE license_for_software SET "name" = 'Lawrence Berkeley National Labs BSD variant license', "reference" = 'https://spdx.org/licenses/BSD-3-Clause-LBNL.html' WHERE "license" = 'BSD-3-Clause-LBNL';
+UPDATE license_for_software SET "name" = 'Creative Commons Zero v1.0 Universal', "reference" = 'https://spdx.org/licenses/CC0-1.0.html' WHERE "license" = 'CC0-1.0';
+UPDATE license_for_software SET "name" = 'Creative Commons Attribution 4.0 International', "reference" = 'https://spdx.org/licenses/CC-BY-4.0.html' WHERE "license" = 'CC-BY-4.0';
+UPDATE license_for_software SET "name" = 'Creative Commons Attribution Non Commercial No Derivatives 4.0 International', "reference" = 'https://spdx.org/licenses/CC-BY-NC-ND-4.0.html' WHERE "license" = 'CC-BY-NC-ND-4.0';
+UPDATE license_for_software SET "name" = 'Creative Commons Attribution Non Commercial Share Alike 1.0 Generic', "reference" = 'https://spdx.org/licenses/CC-BY-NC-SA-1.0.html' WHERE "license" = 'CC-BY-NC-SA-1.0';
+UPDATE license_for_software SET "name" = 'Creative Commons Attribution Share Alike 4.0 International', "reference" = 'https://spdx.org/licenses/CC-BY-SA-4.0.html' WHERE "license" = 'CC-BY-SA-4.0';
+UPDATE license_for_software SET "name" = 'Eclipse Public License 1.0', "reference" = 'https://spdx.org/licenses/EPL-1.0.html' WHERE "license" = 'EPL-1.0';
+UPDATE license_for_software SET "name" = 'GNU General Public License v2.0 only', "reference" = 'https://spdx.org/licenses/GPL-2.0.html' WHERE "license" = 'GPL-2.0';
+UPDATE license_for_software SET "name" = 'GNU General Public License v2.0 only', "reference" = 'https://spdx.org/licenses/GPL-2.0-only.html' WHERE "license" = 'GPL-2.0-only';
+UPDATE license_for_software SET "name" = 'GNU General Public License v2.0 or later', "reference" = 'https://spdx.org/licenses/GPL-2.0-or-later.html' WHERE "license" = 'GPL-2.0-or-later';
+UPDATE license_for_software SET "name" = 'GNU General Public License v3.0 only', "reference" = 'https://spdx.org/licenses/GPL-3.0.html' WHERE "license" = 'GPL-3.0';
+UPDATE license_for_software SET "name" = 'GNU General Public License v3.0 only', "reference" = 'https://spdx.org/licenses/GPL-3.0-only.html' WHERE "license" = 'GPL-3.0-only';
+UPDATE license_for_software SET "name" = 'GNU General Public License v3.0 or later', "reference" = 'https://spdx.org/licenses/GPL-3.0-or-later.html' WHERE "license" = 'GPL-3.0-or-later';
+UPDATE license_for_software SET "name" = 'GNU Library General Public License v2 only', "reference" = 'https://spdx.org/licenses/LGPL-2.0.html' WHERE "license" = 'LGPL-2.0';
+UPDATE license_for_software SET "name" = 'GNU Library General Public License v2 only', "reference" = 'https://spdx.org/licenses/LGPL-2.0-only.html' WHERE "license" = 'LGPL-2.0-only';
+UPDATE license_for_software SET "name" = 'GNU Lesser General Public License v2.1 only', "reference" = 'https://spdx.org/licenses/LGPL-2.1-only.html' WHERE "license" = 'LGPL-2.1-only';
+UPDATE license_for_software SET "name" = 'GNU Lesser General Public License v2.1 or later', "reference" = 'https://spdx.org/licenses/LGPL-2.1-or-later.html' WHERE "license" = 'LGPL-2.1-or-later';
+UPDATE license_for_software SET "name" = 'GNU Lesser General Public License v3.0 only', "reference" = 'https://spdx.org/licenses/LGPL-3.0.html' WHERE "license" = 'LGPL-3.0';
+UPDATE license_for_software SET "name" = 'GNU Lesser General Public License v3.0 only', "reference" = 'https://spdx.org/licenses/LGPL-3.0-only.html' WHERE "license" = 'LGPL-3.0-only';
+UPDATE license_for_software SET "name" = 'MIT License', "reference" = 'https://spdx.org/licenses/MIT.html' WHERE "license" = 'MIT';
+UPDATE license_for_software SET "name" = 'Mozilla Public License 2.0', "reference" = 'https://spdx.org/licenses/MPL-2.0.html' WHERE "license" = 'MPL-2.0';
+UPDATE license_for_software SET "name" = 'X11 License', "reference" = 'https://spdx.org/licenses/X11.html' WHERE "license" = 'X11';
