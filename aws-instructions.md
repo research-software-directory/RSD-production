@@ -55,9 +55,14 @@ echo "0 5 * * * /usr/bin/bash -c 'docker-compose exec -T nginx /usr/bin/certbot 
 ```
 
 ### Automatically create backups to S3 and SURFdrive
-Create a backup script (fill in the values first). This script was adapted from https://glacius.tmont.com/articles/uploading-to-s3-in-bash:
+
+We store our backups on AWS S3 and SURFdrive. We use the AWS CLI to easily upload backup files from our VM to their servers. The installation instructions for the AWS CLI can be found [here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+
+We recommend to create a dedicated IAM user that only has the `PutObject` permission on the S3 Bucket of your choice. After you've done this, create an [access key](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html) for this user and configure the CLI with `aws configure` and `sudo aws configure`. The first variant is for when you manually want to run the backup script, and the latter is for the cron job.
+
+We use the following bash script (named `make-backup.sh`) to create and upload the backups:
+
 ```bash
-echo '
 #!/bin/bash
 rm *-rsd-backup.tar
 
@@ -67,32 +72,21 @@ docker cp database:rsd-backup.tar rsd-backup.tar
 mv rsd-backup.tar $(date --utc -Iseconds)-rsd-backup.tar
 
 file=$(ls *-rsd-backup.tar)
-bucket_folder=your/s3/subfolders
-bucket=your-bucket
-resource="/${bucket}/${bucket_folder}/${file}"
-contentType="application/x-compressed-tar"
-dateValue=`date -R`
-stringToSign="PUT\n\n${contentType}\n${dateValue}\n${resource}"
-s3Key=xxxxxxxxxxxxxxxxxxxx
-s3Secret=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3Secret} -binary | base64`
-curl -X PUT -T "${file}" \
-  -H "Host: ${bucket}.s3.amazonaws.com" \
-  -H "Date: ${dateValue}" \
-  -H "Content-Type: ${contentType}" \
-  -H "Authorization: AWS ${s3Key}:${signature}" \
-  https://${bucket}.s3.amazonaws.com/${bucket_folder}/${file}
+
+aws s3 cp "$file" "s3://your-bucket"
 
 curl --user username:password --upload-file ${file} \
   "https://surfdrive.surf.nl/files/remote.php/nonshib-webdav/rsd-backups/"
 ```
-See e.g. https://supsystic.com/documentation/id-secret-access-key-amazon-s3/ on how to obtain a key and secret.
 
 Make it execuable:
+
 ```bash
 chmod +x make-backup.sh
 ```
+
 And add it to the crontab:
+
 ```bash
 (crontab -l ; echo "0 4 * * * /home/ubuntu/make-backup.sh") | crontab -
 ```
