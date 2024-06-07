@@ -1,5 +1,9 @@
 ---------- CREATED BY MIGRA ----------
 
+-- WARNING:
+-- If you have any category icons in production, you have to alter the script so that they are migrated to the `properties` column, because this script simply drops (i.e. permanently removes) them
+-- END WARNING
+
 alter table "public"."category" drop column "icon";
 
 alter table "public"."category" add column "properties" jsonb not null default '{}'::jsonb;
