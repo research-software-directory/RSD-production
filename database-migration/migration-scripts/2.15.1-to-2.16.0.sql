@@ -1,3 +1,5 @@
+---------- CREATED BY MIGRA ----------
+
 create type "public"."request_status" as enum ('pending', 'approved', 'rejected');
 
 create table "public"."community" (
