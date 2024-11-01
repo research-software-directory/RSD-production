@@ -4,15 +4,9 @@ drop policy "maintainer_all_rights" on "public"."category";
 
 drop policy "anyone_can_read" on "public"."category_for_software";
 
-alter table "public"."mention" drop constraint "mention_external_id_source_key";
-
 alter table "public"."category" drop constraint "unique_name";
 
 alter table "public"."category" drop constraint "unique_short_name";
-
-drop function if exists "public"."reference_papers_to_scrape"();
-
-drop index if exists "public"."mention_external_id_source_key";
 
 drop index if exists "public"."unique_name";
 
@@ -32,17 +26,11 @@ alter table "public"."category" add column "allow_software" boolean not null def
 
 alter table "public"."category" add column "organisation" uuid;
 
-alter table "public"."mention" drop column "external_id";
-
-alter table "public"."mention" add column "openalex_id" citext;
-
 CREATE INDEX category_for_project_category_id_idx ON public.category_for_project USING btree (category_id);
 
 CREATE UNIQUE INDEX category_for_project_pkey ON public.category_for_project USING btree (project_id, category_id);
 
 CREATE INDEX category_organisation_idx ON public.category USING btree (organisation);
-
-CREATE UNIQUE INDEX mention_openalex_id_key ON public.mention USING btree (openalex_id);
 
 CREATE UNIQUE INDEX unique_name ON public.category USING btree (parent, name, community, organisation) NULLS NOT DISTINCT;
 
@@ -57,10 +45,6 @@ alter table "public"."category" add constraint "only_one_entity" CHECK (((commun
 alter table "public"."category_for_project" add constraint "category_for_project_category_id_fkey" FOREIGN KEY (category_id) REFERENCES category(id);
 
 alter table "public"."category_for_project" add constraint "category_for_project_project_id_fkey" FOREIGN KEY (project_id) REFERENCES project(id);
-
-alter table "public"."mention" add constraint "mention_openalex_id_check" CHECK ((openalex_id ~ '^https://openalex\.org/[WwAaSsIiCcPpFf]\d{3,13}$'::citext));
-
-alter table "public"."mention" add constraint "mention_openalex_id_key" UNIQUE using index "mention_openalex_id_key";
 
 alter table "public"."category" add constraint "unique_name" UNIQUE using index "unique_name";
 
@@ -161,31 +145,6 @@ BEGIN
 	SELECT COUNT(DISTINCT(orcid,given_names,family_names)) FROM contributor INTO contributor_cnt;
 	SELECT COUNT(*) FROM mentions_by_software() INTO software_mention_cnt;
 END
-$function$
-;
-
-CREATE OR REPLACE FUNCTION public.reference_papers_to_scrape()
- RETURNS TABLE(id uuid, doi citext, openalex_id citext, citations_scraped_at timestamp with time zone, known_citing_dois citext[])
- LANGUAGE sql
- STABLE
-AS $function$
-	SELECT mention.id, mention.doi, mention.openalex_id, mention.citations_scraped_at, ARRAY_REMOVE(ARRAY_AGG(citation.doi), NULL)
-	FROM mention
-	LEFT JOIN citation_for_mention ON mention.id = citation_for_mention.mention
-	LEFT JOIN mention AS citation ON citation_for_mention.citation = citation.id
-	WHERE
-	-- ONLY items with DOI or OpenAlex id
-		(mention.doi IS NOT NULL OR mention.openalex_id IS NOT NULL)
-		AND (
-			mention.id IN (
-				SELECT mention FROM reference_paper_for_software
-			)
-			OR
-			mention.id IN (
-				SELECT mention FROM output_for_project
-			)
-		)
-	GROUP BY mention.id
 $function$
 ;
 
