@@ -2,6 +2,8 @@
 
 -- manually added
 
+UPDATE contributor SET role = NULL WHERE role ~ '^\s*$';
+UPDATE team_member SET role = NULL WHERE role ~ '^\s*$';
 UPDATE contributor SET role = regexp_replace(role, '\s{2,}', ' ', 'g') WHERE NOT role ~ '^\S+( \S+)*$';
 UPDATE team_member SET role = regexp_replace(role, '\s{2,}', ' ', 'g') WHERE NOT role ~ '^\S+( \S+)*$';
 UPDATE contributor SET role = regexp_replace(role, '^\s+', '', 'g') WHERE NOT role ~ '^\S+( \S+)*$';
@@ -9,6 +11,8 @@ UPDATE team_member SET role = regexp_replace(role, '^\s+', '', 'g') WHERE NOT ro
 UPDATE contributor SET role = regexp_replace(role, '\s+$', '', 'g') WHERE NOT role ~ '^\S+( \S+)*$';
 UPDATE team_member SET role = regexp_replace(role, '\s+$', '', 'g') WHERE NOT role ~ '^\S+( \S+)*$';
 
+UPDATE contributor SET affiliation = NULL WHERE affiliation ~ '^\s*$';
+UPDATE team_member SET affiliation = NULL WHERE affiliation ~ '^\s*$';
 UPDATE contributor SET affiliation = regexp_replace(affiliation, '\s{2,}', ' ', 'g') WHERE NOT affiliation ~ '^\S+( \S+)*$';
 UPDATE team_member SET affiliation = regexp_replace(affiliation, '\s{2,}', ' ', 'g') WHERE NOT affiliation ~ '^\S+( \S+)*$';
 UPDATE contributor SET affiliation = regexp_replace(affiliation, '^\s+', '', 'g') WHERE NOT affiliation ~ '^\S+( \S+)*$';
