@@ -20,6 +20,10 @@ UPDATE mention SET image_url = regexp_replace(image_url, '\s+', '', 'g') WHERE i
 --SELECT url FROM mention WHERE url !~ '^https?://\S+$';
 --SELECT image_url FROM mention WHERE image_url !~ '^https?://\S+$';
 
+-- We recommend to disable JIT (https://www.postgresql.org/docs/15/jit.html), replace the database name if appropriate:
+--ALTER DATABASE "rsd-db" SET JIT = OFF;
+
+
 -- end added manually
 
 ---------- CREATED BY MIGRA ----------
