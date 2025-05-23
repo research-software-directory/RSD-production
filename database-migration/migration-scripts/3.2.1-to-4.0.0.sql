@@ -2,6 +2,7 @@
 
 -- migration statement for public profiles
 -- this might go wrong if someone has multiple ORCIDs attached to their account
+-- this migrates existing names and splits them on the first space
 WITH existing_public_profiles AS (
 	SELECT account.id, account.public_orcid_profile, COALESCE((STRING_TO_ARRAY(login_for_account.name, ' '))[1], '') AS given_names, COALESCE(ARRAY_TO_STRING((STRING_TO_ARRAY(login_for_account.name, ' '))[2:], ' '), '') AS family_names
 	FROM account
