@@ -29,3 +29,11 @@ Download the RPD:
 ```bash
 curl --location --output release.zip https://github.com/research-software-directory/KIN-RPD/releases/download/v1.0.1/deployment.zip && unzip release.zip
 ```
+
+Now create the env file and fill in or adapt the values:
+
+```bash
+cp .env.example .env && nano .env
+```
+
+Make sure to make a note of the passwords you set and store them somewhere safe. 
