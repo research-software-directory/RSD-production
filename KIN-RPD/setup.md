@@ -27,7 +27,7 @@ Follow the [Docker installation instructions here](https://docs.docker.com/engin
 Download the RPD:
 
 ```bash
-curl --location --output release.zip https://github.com/research-software-directory/KIN-RPD/releases/download/v1.0.1/deployment.zip && unzip release.zip
+curl --location --output release.zip https://github.com/research-software-directory/KIN-RPD/releases/download/v1.0.2/deployment.zip && unzip release.zip
 ```
 
 Now create the env file and fill in or adapt the values:
