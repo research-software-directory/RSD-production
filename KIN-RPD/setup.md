@@ -49,3 +49,17 @@ server {
 ```
 
 Furthermore, change the line containing `server_name  localhost;` and replace `localhost` with your domain name.
+
+Now you are ready to launch the RSD:
+
+```bash
+docker compose up --detach
+```
+
+To obtain https certificates, make sure the domain name points to your vm and run
+
+```bash
+docker compose exec nginx bash -c 'certbot --nginx -d domain.example.com --agree-tos -m email@example.com'
+```
+
+Visit your domain, the RSD should now be running!
