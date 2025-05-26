@@ -1,5 +1,11 @@
 ## Initial setup
 
+Install `unzip`:
+
+```bash
+sudo apt-get update && sudo apt-get install unzip
+```
+
 The SSH key can be found in LastPass.
 
 Make the key read only:
