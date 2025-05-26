@@ -37,3 +37,15 @@ cp .env.example .env && nano .env
 ```
 
 Make sure to make a note of the passwords you set and store them somewhere safe. 
+
+Edit the `nginx.conf`. Remove the block that looks like:
+
+```
+server {
+        listen       80;
+        server_name  www.localhost;
+        return 301 $scheme://localhost$request_uri;
+}
+```
+
+Furthermore, change the line containing `server_name  localhost;` and replace `localhost` with your domain name.
