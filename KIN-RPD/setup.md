@@ -1,11 +1,5 @@
 ## Initial setup
 
-Install `unzip`:
-
-```bash
-sudo apt-get update && sudo apt-get install unzip
-```
-
 The SSH key can be found in LastPass.
 
 Make the key read only:
@@ -19,6 +13,13 @@ Then SSH into the server with
 ```bash
 ssh -i kin-rpd-production-key.pem ubuntu@3.72.246.175
 ```
+
+Install `unzip`:
+
+```bash
+sudo apt-get update && sudo apt-get install unzip
+```
+
 Follow the [Docker installation instructions here](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) to install Docker. Also follow the [post install instructions](https://docs.docker.com/engine/install/linux-postinstall/) to be able to run Docker as regular user.
 
 ## Install the RPD
