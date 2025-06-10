@@ -86,3 +86,10 @@ Run the following to check the certificates every day at 5 AM:
 echo "0 5 * * * /usr/bin/bash -c 'docker compose exec -T nginx /usr/bin/certbot renew'" | crontab -
 ```
 
+### Automatically create backups to S3
+
+Create an IAM user that can create new objects in one S3 bucket.
+
+Use the [AWS documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) to install the AWS CLI and [autenticate yourself](https://docs.aws.amazon.com/cli/latest/userguide/cli-authentication-user.html) on the CLI.
+
+
