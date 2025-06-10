@@ -48,7 +48,7 @@ server {
 }
 ```
 
-Furthermore, change the line containing `server_name  localhost;` and replace `localhost` with your domain name.
+Furthermore, change the line containing `server_name  localhost;` and replace `localhost` with your domain name, which in our case is `vedaresearch.nl`.
 
 Now you are ready to launch the RSD:
 
@@ -59,7 +59,23 @@ docker compose up --detach
 To obtain https certificates, make sure the domain name points to your vm and run
 
 ```bash
-docker compose exec nginx bash -c 'certbot --nginx -d domain.example.com --agree-tos -m email@example.com'
+docker compose exec nginx bash -c 'certbot --nginx -d vedaresearch.nl --agree-tos -m email@example.com'
 ```
 
 Visit your domain, the RSD should now be running!
+
+To allow a secondary domain, add the following block, editing the domain if necessary:
+
+```
+server {
+        server_name  vedanet.nl;
+        return 301 https://vedaresearch.nl$request_uri;
+}
+```
+And then run, as before:
+
+```bash
+docker compose exec nginx bash -c 'certbot --nginx -d vedanet.nl --agree-tos -m email@example.com'
+```
+
+
