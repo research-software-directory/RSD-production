@@ -78,4 +78,11 @@ And then run, as before:
 docker compose exec nginx bash -c 'certbot --nginx -d vedanet.nl --agree-tos -m email@example.com'
 ```
 
+### Automatically renew https certificates
+
+Run the following to check the certificates every day at 5 AM:
+
+```bash
+echo "0 5 * * * /usr/bin/bash -c 'docker compose exec -T nginx /usr/bin/certbot renew'" | crontab -
+```
 
