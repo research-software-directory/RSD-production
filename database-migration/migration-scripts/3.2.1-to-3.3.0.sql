@@ -1,6 +1,6 @@
 ---------- CREATED BY MIGRA ----------
 
--- THIS STATEMENT WAS MOVED TO THE TOP TO ALLOW MIGRATION STATEMENT BELOW
+-- THESE STATEMENTs WERE MOVED TO THE TOP TO ALLOW MIGRATION STATEMENT BELOW
 create table "public"."user_profile" (
     "account" uuid not null,
     "given_names" character varying(200) not null,
@@ -14,6 +14,22 @@ create table "public"."user_profile" (
     "created_at" timestamp with time zone not null,
     "updated_at" timestamp with time zone not null
 );
+
+CREATE OR REPLACE FUNCTION public.sanitise_insert_user_profile()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+	-- use account uuid from token ?
+	-- NEW.account = uuid(current_setting('request.jwt.claims', FALSE)::json->>'account');
+	NEW.created_at = LOCALTIMESTAMP;
+	NEW.updated_at = NEW.created_at;
+	return NEW;
+END
+$function$
+;
+
+CREATE TRIGGER sanitise_insert_user_profile BEFORE INSERT ON public.user_profile FOR EACH ROW EXECUTE FUNCTION sanitise_insert_user_profile();
 
 -- ADDED MANUALLY
 -- migration statement for public profiles
@@ -421,20 +437,6 @@ CREATE OR REPLACE FUNCTION public.sanitise_insert_account_invite()
 AS $function$
 BEGIN
 	NEW.id = gen_random_uuid();
-	NEW.created_at = LOCALTIMESTAMP;
-	NEW.updated_at = NEW.created_at;
-	return NEW;
-END
-$function$
-;
-
-CREATE OR REPLACE FUNCTION public.sanitise_insert_user_profile()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-BEGIN
-	-- use account uuid from token ?
-	-- NEW.account = uuid(current_setting('request.jwt.claims', FALSE)::json->>'account');
 	NEW.created_at = LOCALTIMESTAMP;
 	NEW.updated_at = NEW.created_at;
 	return NEW;
@@ -891,8 +893,6 @@ CREATE TRIGGER check_account_invite_before_update BEFORE UPDATE ON public.accoun
 CREATE TRIGGER sanitise_insert_account_invite BEFORE INSERT ON public.account_invite FOR EACH ROW EXECUTE FUNCTION sanitise_insert_account_invite();
 
 CREATE TRIGGER sanitise_update_account_invite BEFORE UPDATE ON public.account_invite FOR EACH ROW EXECUTE FUNCTION sanitise_update_login_for_account();
-
-CREATE TRIGGER sanitise_insert_user_profile BEFORE INSERT ON public.user_profile FOR EACH ROW EXECUTE FUNCTION sanitise_insert_user_profile();
 
 CREATE TRIGGER sanitise_update_login_for_account BEFORE UPDATE ON public.user_profile FOR EACH ROW EXECUTE FUNCTION sanitise_update_user_profile();
 
