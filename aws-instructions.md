@@ -20,7 +20,7 @@ sudo systemctl enable docker.service && sudo systemctl enable containerd.service
 ### Install the RSD
 We first need to download the required files from the release we want to use:
 ```bash
-curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v3.5.0/deployment.zip && unzip release.zip
+curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v3.6.0/deployment.zip && unzip release.zip
 ```
 See https://github.com/research-software-directory/RSD-as-a-service/releases for other releases.
 
