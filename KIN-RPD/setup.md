@@ -68,14 +68,14 @@ To allow a secondary domain, add the following block, editing the domain if nece
 
 ```
 server {
-        server_name  vedanet.nl www.vedanet.nl www.vedaresearh.nl;
+        server_name  vedanet.nl www.vedanet.nl www.vedaresearch.nl;
         return 301 https://vedaresearch.nl$request_uri;
 }
 ```
 And then run, as before:
 
 ```bash
-docker compose exec nginx bash -c 'certbot --nginx -d vedanet.nl -d www.vedanet.nl -d www.vedaresearh.nl --agree-tos -m email@example.com'
+docker compose exec nginx bash -c 'certbot --nginx -d vedanet.nl -d www.vedanet.nl -d www.vedaresearch.nl --agree-tos -m email@example.com'
 ```
 
 ### Automatically renew https certificates
