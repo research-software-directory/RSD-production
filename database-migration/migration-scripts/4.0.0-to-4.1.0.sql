@@ -1,5 +1,7 @@
 ---------- CREATED BY MIGRA ----------
 
+-- one manual change, see the comment below (line 22)
+
 drop function if exists "public"."communities_overview"(public boolean);
 
 create table "public"."locked_account" (
