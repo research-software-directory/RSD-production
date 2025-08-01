@@ -17,7 +17,9 @@ alter table "public"."account_invite" add column "comment" character varying(50)
 
 alter table "public"."community" add column "website" character varying(200);
 
-alter table "public"."software_for_community" add column "requested_at" timestamp with time zone not null;
+-- IMPORTANT: manually removed the NOT NULL requirement for "public"."software_for_community", since existing entries don't have a value
+
+alter table "public"."software_for_community" add column "requested_at" timestamp with time zone;
 
 CREATE UNIQUE INDEX community_website_key ON public.community USING btree (website);
 
