@@ -79,7 +79,7 @@ Use the following script to make backups:
 #!/bin/bash
 rm *-rsd-backup.tar
 
-docker compose exec -T database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db
+docker compose exec --no-TTY database pg_dump --format=tar --file=rsd-backup.tar --username=rsd --dbname=rsd-db
 docker cp database:rsd-backup.tar rsd-backup.tar
 
 mv rsd-backup.tar $(date --utc -Iseconds)-rsd-backup.tar
