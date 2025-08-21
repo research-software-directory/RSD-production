@@ -106,7 +106,7 @@ chmod +x make-backup.sh
 And add it to the crontab:
 
 ```bash
-(crontab -l ; echo "0 4 * * * /home/ubuntu/make-backup.sh") | crontab -
+(crontab -l ; echo "0 4 * * * /home/rsd/make-backup.sh") | crontab -
 ```
 
 ## Update the RSD
