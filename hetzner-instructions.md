@@ -49,17 +49,14 @@ Now you are ready to launch the RSD:
 ```bash
 docker compose up --detach
 ```
-To obtain https certificates, make sure the domain name points to your vm and run
-```bash
-docker compose exec nginx bash -c 'certbot --nginx -d domain.example.com --agree-tos -m email@example.com'
-```
-Visit your domain, the RSD should now be running!
 
 To obtain https certificates, make sure the domain name points to your vm and run
 
 ```bash
 docker compose exec nginx bash -c 'certbot --nginx -d research-software-directory.org -d www.research-software-directory.org -d research.software -d research-software.nl -d www.research-software.nl --agree-tos -m email@example.com'
 ```
+
+Visit your domain, the RSD should now be running!
 
 ### Automatically renew https certificates
 
