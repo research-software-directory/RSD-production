@@ -1,3 +1,7 @@
+# Deprecated
+
+These instructions are deprecated and will no longer be kept up to date. See the Hetzner instructions instead.
+
 ### Setup docker
 We first need to install docker, docker-compose and unzip:
 ```bash
