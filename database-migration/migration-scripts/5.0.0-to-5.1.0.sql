@@ -1,0 +1,1 @@
+-- no changes, but Postgres was upgraded from version 15.13 to 17.6, see https://www.postgresql.org/docs/17/upgrading.html on how to upgrade.
