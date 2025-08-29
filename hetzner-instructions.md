@@ -142,3 +142,20 @@ docker compose exec database pg_restore --username=rsd --dbname=rsd-db --clean r
 ```
 
 *Warning:* note that the `--clean` flag will first clear the database.
+
+## Doing a major upgrade of the database
+
+The official instructions can be found [here](https://www.postgresql.org/docs/current/upgrading.html), but the following steps work for us.
+
+1. Stop all containers that can write to the database:
+
+```bash
+docker compose stop nginx scrapers background-services
+```
+
+2. Make a backup, as described above
+3. Download the new release, as described above
+4. Remove the database volume, check with `docker volume ls` what its name is and remove it with `docker volume ls`
+5. Rename (or copy) the backup with a timestamp in its name to `rsd-backup.tar` with `mv` or `cp`
+6. Start the new version of the RSD, with `docker compose up --detach`
+7. Restore the backup, as described above
