@@ -24,7 +24,7 @@ A non-root user `rsd` was created to run the Docker containers.
 We first need to download the required files from the release we want to use:
 
 ```bash
-curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v5.1.0/deployment.zip && unzip release.zip
+curl --location --output release.zip https://github.com/research-software-directory/RSD-as-a-service/releases/download/v5.2.0/deployment.zip && unzip release.zip
 ```
 
 See https://github.com/research-software-directory/RSD-as-a-service/releases for other releases.
