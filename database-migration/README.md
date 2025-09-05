@@ -23,11 +23,11 @@ docker cp database:/docker-entrypoint-initdb.d/. database/.
 ```
 Now build the images:
 ```bash
-docker-compose --file database-migration.yml build --parallel
+docker compose --file database-migration.yml build --parallel
 ```
 Then create and run the containers:
 ```bash
-docker-compose --file database-migration.yml up
+docker compose --file database-migration.yml up
 ```
 Wait until migra has run (it waits for 10 seconds before operating). When it exits with exit code `0`, no differences where found, whereas when it exits with exit code `2`, differences *were* found. In both cases, stop the containers with `Ctrl+C`.
 
@@ -45,15 +45,15 @@ docker cp migration.sql database:migration.sql
 ```
 Now we can execute the statements in this file. The `--single-transaction` flag is **very** important, you might end up in a corrupted state otherwise:
 ```bash
-docker-compose exec database psql --dbname=rsd-db --username=rsd --single-transaction --file=migration.sql
+docker compose exec database psql --dbname=rsd-db --username=rsd --single-transaction --file=migration.sql
 ```
 We need to [reload the schema cache](https://postgrest.org/en/v10.0/schema_cache.html#schema-reloading) of PostgREST:
 ```bash
-docker-compose kill -s SIGUSR1 backend
+docker compose kill -s SIGUSR1 backend
 ```
 You can now safely delete the migration containers and volumes. You need to do this in order for migra to detect new changes the next time you repeat this procedure:
 ```bash
-docker-compose --file database-migration.yml down --volumes
+docker compose --file database-migration.yml down --volumes
 ```
 Finally, cleanup the database files for the next time:
 ```bash
