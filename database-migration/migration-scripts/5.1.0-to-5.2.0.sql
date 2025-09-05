@@ -12,6 +12,12 @@ alter type "public"."package_manager_type" rename to "package_manager_type__old_
 
 create type "public"."package_manager_type" as enum ('anaconda', 'bioconductor', 'chocolatey', 'cran', 'crates', 'debian', 'dockerhub', 'fourtu', 'ghcr', 'github', 'gitlab', 'golang', 'julia', 'maven', 'npm', 'pixi', 'pypi', 'snapcraft', 'sonatype', 'other');
 
+-- ADDED MANUALLY
+
+DROP FUNCTION IF EXISTS "public"."suggest_platform";
+
+-- END ADDED MANUALLY
+
 alter type "public"."platform_type" rename to "platform_type__old_version_to_be_dropped";
 
 create type "public"."platform_type" as enum ('github', 'gitlab', 'bitbucket', '4tu', 'codeberg', 'other');
@@ -112,4 +118,38 @@ create or replace view "public"."user_count_per_home_organisation" as  SELECT lo
    FROM login_for_account
   GROUP BY login_for_account.home_organisation;
 
+-- ADDED MANUALLY
 
+CREATE FUNCTION suggest_platform(hostname VARCHAR(200)) RETURNS platform_type
+LANGUAGE SQL STABLE AS
+$$
+SELECT
+	code_platform
+FROM
+	(
+		SELECT
+			url,
+			code_platform
+		FROM
+			repository_url
+	) AS sub
+WHERE
+	(
+		-- Returns the hostname of sub.url
+		SELECT
+			TOKEN
+		FROM
+			ts_debug(sub.url)
+		WHERE
+			alias = 'host'
+	) = hostname
+GROUP BY
+	sub.code_platform
+ORDER BY
+	COUNT(*)
+DESC LIMIT
+	1;
+;
+$$;
+
+-- END ADDED MANUALLY
