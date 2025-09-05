@@ -1,6 +1,8 @@
 ---------- CREATED BY MIGRA ----------
 
--- removed lines involving count_software_mentions_cached and user_count_per_home_organisation as they were not changed
+-- commented lines involving count_software_mentions_cached and user_count_per_home_organisation as they were not changed
+
+--drop materialized view if exists "public"."count_software_mentions_cached";
 
 drop function if exists "public"."project_quality"(show_all boolean);
 
@@ -58,6 +60,10 @@ GROUP BY category_for_project.project_id
 $function$
 ;
 
+--create materialized view "public"."count_software_mentions_cached" as  SELECT count_software_mentions.software,
+--    count_software_mentions.mention_cnt
+--   FROM count_software_mentions() count_software_mentions(software, mention_cnt);
+
 
 CREATE OR REPLACE FUNCTION public.project_quality(show_all boolean DEFAULT false)
  RETURNS TABLE(slug character varying, title character varying, has_subtitle boolean, is_published boolean, date_start date, date_end date, grant_id character varying, has_image boolean, team_member_cnt integer, has_contact_person boolean, participating_org_cnt integer, funding_org_cnt integer, software_cnt integer, project_cnt integer, keyword_cnt integer, research_domain_cnt integer, impact_cnt integer, output_cnt integer, category_cnt integer)
@@ -108,6 +114,11 @@ WHERE
 	CASE WHEN show_all IS TRUE THEN TRUE ELSE project.id IN (SELECT * FROM projects_of_current_maintainer()) END;
 $function$
 ;
+
+--create or replace view "public"."user_count_per_home_organisation" as  SELECT login_for_account.home_organisation,
+--    count(*) AS count
+--   FROM login_for_account
+--  GROUP BY login_for_account.home_organisation;
 
 -- ADDED MANUALLY
 
