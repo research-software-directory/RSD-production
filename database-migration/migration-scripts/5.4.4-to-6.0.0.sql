@@ -2,6 +2,11 @@
 
 -- CONTAINS AN EXTRA STEP TO MIGRATE REPOSITORY URLS
 
+-- Before you upgrage to 6.0.0, you have to remve duplicate repo URL entries (so delete all but one) and add them back after the migration.
+-- To see which duplicates you have, run the following query:
+-- SELECT ru.url, count(ru.url), ARRAY_AGG(s.slug) FROM repository_url AS ru INNER JOIN software AS s ON s.id = ru.software group by url having count(url) > 1;
+-- Remember to keep track of the software from which you delete the URLs in order to add them back later. Do this deleting and adding through the web UI.
+
 ---------- CREATED BY MIGRA ----------
 
 drop policy "maintainer_all_rights" on "public"."repository_url";
